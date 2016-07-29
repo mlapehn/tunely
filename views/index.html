@@ -18,23 +18,20 @@
     <script src="js/app.js"></script>
   </head>
   <body>
+    <!-- Hero Graphic -->
     <div class="jumbotron">
       <div class="container">
         <h1>Welcome to tunely</h1>
         <p>Your music binder!</p>
       </div>
     </div>
-
-
-
-
-    <!-- BEGIN FORM SAMPLE -->
-
+    
+    <!-- Search Form Container  -->
     <section id='album-form' class="container">
-      <div class="row">
-      <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+        <div class="col-md-10 col-md-offset-1">
 
-        <form class="form-horizontal">
+        <form class="form-horizontal" id="search-form">
           <fieldset>
 
             <!-- Form Name -->
@@ -44,7 +41,7 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="name">Album Name</label>
               <div class="col-md-4">
-              <input id="name" name="name" type="text" placeholder="Bleach" class="form-control input-md" required="">
+              <input id="name" name="name" type="text" placeholder="" class="form-control input-md" required="">
 
               </div>
             </div>
@@ -53,7 +50,7 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="artistName">Artist Name</label>
               <div class="col-md-4">
-              <input id="textinput" name="artistName" type="text" placeholder="Nirvana" class="form-control input-md">
+              <input id="textinput" name="artistName" type="text" placeholder="" class="form-control input-md">
 
               </div>
             </div>
@@ -62,7 +59,7 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="releaseDate">Release Date</label>
               <div class="col-md-4">
-              <input id="releaseDate" name="releaseDate" type="text" placeholder="1989" class="form-control input-md">
+              <input id="releaseDate" name="releaseDate" type="text" placeholder="1992" class="form-control input-md">
 
               </div>
             </div>
@@ -71,10 +68,9 @@
             <div class="form-group">
               <label class="col-md-4 control-label" for="genres">Genres (separated by commas)</label>
               <div class="col-md-4">
-                <textarea class="form-control" id="genres" name="genres">rock, pop</textarea>
+                <textarea class="form-control" id="genres" name="genres" placeholder="rock, pop, etc."></textarea>
               </div>
             </div>
-
 
             <!-- Button -->
             <div class="form-group">
@@ -88,12 +84,8 @@
       </div>
       </div>
     </section>
-
-     <!--   END FORM SAMPLE -->
-
-
-
-
+    
+    <!-- Album List Container -->
     <section class="container">
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
@@ -102,7 +94,7 @@
       </div>
       <!-- albums! -->
       <div id='albums'>
-
+         <!-- jQuery Album Data Dom'd Here -->
       </div>
     </section>
 
@@ -136,6 +128,7 @@
             </div>
 
             </fieldset>
+
 
           </div>
           <div class="modal-footer">

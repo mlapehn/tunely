@@ -4,17 +4,18 @@
 var express = require('express');
 // generate a new express app and call it 'app'
 var app = express();
-var mongoose = require('mongoose');
+//require body-parser in our app
 var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // serve static files from public folder
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({ extended: true }));
+
 
 /************
  * DATABASE *
  ************/
-
 var db = require('./models');
 
 /**********
@@ -29,11 +30,11 @@ app.get('/', function homepage (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-
 /*
  * JSON API Endpoints
  */
 
+//Get API Data
 app.get('/api', function api_index (req, res){
   res.json({
     message: "Welcome to tunely!",
@@ -41,69 +42,54 @@ app.get('/api', function api_index (req, res){
     base_url: "http://tunely.herokuapp.com",
     endpoints: [
       {method: "GET", path: "/api", description: "Describes available endpoints"}
-      // {method: "GET", path: "/api/albums", description: "Albums"}
     ]
   });
 });
 
-app.get('/api/albums', function albumsIndex(req, res) {
-  db.Album.find({}, function(err, albums) {
-    res.json(albums);
+//Get All Album List
+app.get('/api/albums', function album_index(req, res){
+  db.Album.find()
+      .exec(function(err, albums) {
+      if (err) { 
+        return console.log("index error: " + err); 
+      }
+      res.json(albums);
   });
 });
 
-app.post('/api/albums', function albumCreate(req, res) {
-  console.log('body', req.body);
+//Post New Album
+app.post('/api/albums', function album_add(req, res){
+  var newAlbum = req.body;
+  var newAlbumGenres = newAlbum.genres;
+  var genresArray = newAlbumGenres.split(',');
+  newAlbum.genres = genresArray;
 
-  // split at comma and remove and trailing space
-  var genres = req.body.genres.split(',').map(function(item) { return item.trim(); } );
-  req.body.genres = genres;
-
-  db.Album.create(req.body, function(err, album) {
-    if (err) { console.log('error', err); }
-    console.log(album);
-    res.json(album);
-  });
-
-});
-
-
-app.get('/api/albums/:id', function albumShow(req, res) {
-  console.log('requested album id=', req.params.id);
-  db.Album.findOne({_id: req.params.id}, function(err, album) {
+  db.Album.create(newAlbum, function(err, album) {
     res.json(album);
   });
 });
 
-
-app.post('/api/albums/:albumId/songs', function songsCreate(req, res) {
-  console.log('body', req.body);
-  db.Album.findOne({_id: req.params.albumId}, function(err, album) {
-    if (err) { console.log('error', err); }
-
-    var song = new db.Song(req.body);
-    album.songs.push(song);
-    album.save(function(err, savedAlbum) {
-      if (err) { console.log('error', err); }
-      console.log('album with new song saved:', savedAlbum);
-      res.json(song);
+//Post New Song
+app.post('/api/albums/:album_id/songs', function song_add(req, res){
+  var newSong = req.body;
+  var albumId = req.params.album_id;
+  db.Album.findById(albumId, function(err, album){
+    album.songs.push(newSong);
+    album.save(function(err, album){
+      if(err){
+        console.log(err);
+      }
+      res.json(album);
     });
   });
-
 });
 
-//Delete
-//app delete given api
-app.delete('/api/albums/:id', function deleteAlbum(req, res) {
-  console.log('deleting id: ', req.params.id);
-  db.Album.remove({_id: req.params.id}, function(err) {
-    if (err) { return console.log(err); }
-    console.log("removal of id=" + req.params.id  + " successful.");
-    res.status(200).send(); // everything is a-OK
+app.delete('/api/albums/:id', function delete_song(req, res){
+  var deletedAlbumId = req.params.id;
+  db.Album.findOneAndRemove({ _id: deletedAlbumId }, function(err, deletedAlbum){
+    res.json(deletedAlbum);
   });
 });
-
-
 
 /**********
  * SERVER *
@@ -112,4 +98,4 @@ app.delete('/api/albums/:id', function deleteAlbum(req, res) {
 // listen on port 3000
 app.listen(process.env.PORT || 3000, function () {
   console.log('Express server is running on http://localhost:3000/');
-});
+}); 
